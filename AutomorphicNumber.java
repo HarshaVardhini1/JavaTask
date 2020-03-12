@@ -2,10 +2,10 @@ public class AutomorphicNumber
 {
 	public static void main(String arg[])
 	{
-		int num=25;
-		int square=(int)Math.pow(num,2);
+		long num=625;
+		long square=(long)Math.pow(num,2);
 		System.out.println(square);
-		int temp=num;
+		long temp=num;
 		int count=0;
 		
 		while(temp>0)
@@ -14,7 +14,7 @@ public class AutomorphicNumber
 			count++;
 		}
 		int divisor=(int)Math.pow(10,count);
-		int remainder=square%divisor;
+		long remainder=square%divisor;
 		if(remainder==num)
 		{
 			System.out.println("It is an Automorphic number!");

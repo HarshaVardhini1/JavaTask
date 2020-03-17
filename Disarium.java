@@ -1,8 +1,13 @@
+import java.util.Scanner;
 public class Disarium
 {
 	public static void main(String ar[])
 	{
-		int num=89;
+		Scanner input=new Scanner(System.in);
+		
+		System.out.println("Enter the number : ");
+		int num = input.nextInt();
+		//int num=89;
 		int sum=0;
 		int count=0;
 		//int count=Integer.toString(num).length();

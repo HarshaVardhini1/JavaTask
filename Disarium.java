@@ -4,9 +4,16 @@ public class Disarium
 	{
 		int num=89;
 		int sum=0;
-		int count=Integer.toString(num).length();
+		int count=0;
+		//int count=Integer.toString(num).length();
 		int temp=num;
 		
+		while(temp>0)
+		{
+			count++;
+			temp=temp/10;
+		}
+		temp=num;
 		while(temp>0)
 		{
 			int digit=temp%10;

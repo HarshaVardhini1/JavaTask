@@ -1,8 +1,12 @@
+import java.util.Scanner;
 public class StrongNumber
 {
 	public static void main(String ar[])
 	{
-		int num=145;
+		Scanner input=new Scanner(System.in);
+		System.out.println("Enter a number : ");
+		int num=input.nextInt();
+		//int num=145;
 		int temp=num;
 		int sum=0;
 		

@@ -8,7 +8,7 @@ public class RemoveString
 		String result="";
 		String resultArr[];
 
-    if(sentance.contains(remove))
+		if(sentance.contains(remove))
 		{
 			resultArr=sentance.split(remove);
 			for(int i=0;i<resultArr.length;i++)

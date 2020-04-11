@@ -6,36 +6,73 @@ public class Minesweeper {
     char[][] displayField;
     static boolean gameover=false;
 
-    public Minesweeper(int rows,int columns,int mineCount){
+    public Minesweeper(){
+        Scanner input=new Scanner(System.in);
+        System.out.print("Enter the total number of rows : ");
+        int rows=input.nextInt();
+        System.out.print("Enter the total number of columns : ");
+        int columns=input.nextInt();
+        System.out.print("Enter the total number of mines : ");
+        int mines=input.nextInt();
+
         field=new int[rows][columns];
         displayField=new char[rows][columns];
-        setMines(mineCount);
+        setMines(mines);
         calculateNeighborsValue();
         showDisplayField();
     }
 
+    public void startGame(){
+        while (!gameover) {
+            Scanner input=new Scanner(System.in);
+            System.out.print("Enter the row : ");
+            int row = input.nextInt()-1;
+            System.out.print("Enter the column : ");
+            int column = input.nextInt()-1;
+            System.out.print("Do you want to flag or open ? (f/o) ");
+            char action = input.next().charAt(0);
+            if(row>=0 && row<field.length && column>=0 && column<field[row].length) {
+                checkUserMove(row, column, action);
+            }
+            else{
+                System.out.println("Please enter a value between 1 to "+field.length+" for rows \n"+
+                        "Please enter a value between 1 to "+field[row].length+" for columns \n"+
+                        "Please enter 'f' to flag or remove flag and 'o' to open!!");
+            }
+        }
+    }
+
     public void setMines(int mineCount){
         Random number = new Random();
-        while(mineCount>0) {
+        for(int i=0;i<field.length;i++){
+            for(int j=0;j<field[i].length;j++){
+                field[i][j]=0;
+            }
+        }
+        for(int i=0;i<mineCount;i++) {
             int row = number.nextInt(field.length);
             int col = number.nextInt(field[row].length);
             if (field[row][col] != -1) {
                 field[row][col] = -1;
-                mineCount--;
             }
-        }
-
-    }
-
-    public void calculateNeighborsValue(){
-        for(int i=0;i<field.length;i++){
-            for(int j=0;j<field[i].length;j++){
-                displayField[i][j]='-';
-                if(field[i][j]==-1){
-                    for (int di = -1; di <= 1; di++) {
-                        for (int dj = -1; dj <= 1; dj++) {
-                            if(i+di>=0 && i+di<field.length && j+dj>=0 && j+dj<field[i].length && field[i+di][j+dj]!=-1) {
-                                field[i + di][j + dj]++;
+            else {
+                if (row + 1 < field.length && field[row + 1][col] != -1) {
+                    field[row + 1][col] = -1;
+                }
+                else {
+                    if (col + 1 < field[row].length && field[row][col + 1] != -1) {
+                        field[row][col + 1] = -1;
+                    }
+                    else {
+                        if (row - 1 > 0 && field[row - 1][col] != -1) {
+                            field[row - 1][col] = -1;
+                        }
+                        else {
+                            if (col - 1 > 0 && field[row][col] != -1) {
+                                field[row][col - 1] = -1;
+                            }
+                            else {
+                                i--;
                             }
                         }
                     }
@@ -44,12 +81,47 @@ public class Minesweeper {
         }
     }
 
+    public void calculateNeighborsValue(){
+        for(int i=0;i<field.length;i++){
+            for(int j=0;j<field[i].length;j++){
+                displayField[i][j]='-';
+                if(field[i][j]==-1){
+                    if (i < field.length && j < field[i].length && i >= 1 && j >= 1 && field[i-1][j-1]!=-1) {
+                        field[i-1][j-1]++;
+                    }
+                    if (i < field.length && j < field[i].length-1 && i >= 1 && j >= 0 && field[i-1][j+1]!=-1) {
+                        field[i-1][j+1]++;
+                    }
+                    if (i < field.length-1 && j < field[i].length && i >= 0 && j >= 1 && field[i+1][j-1]!=-1 ) {
+                        field[i+1][j-1]++;
+                    }
+                    if (i < field.length-1 && j < field[i].length-1 && i >= 0 && j >= 0 && field[i+1][j+1]!=-1 ) {
+                        field[i+1][j+1]++;
+                    }
+                    if (i < field.length && j < field[i].length && i >= 1 && j >= 0 &&  field[i-1][j]!=-1) {
+                        field[i-1][j]++;
+                    }
+                    if(i < field.length && j < field[i].length && i >= 0 && j >= 1 && field[i][j-1]!=-1) {
+                        field[i][j-1]++;
+                    }
+                    if (i < field.length && j < field[i].length-1 && i >= 0 && j >= 0 && field[i][j+1]!=-1) {
+                        field[i][j+1]++;
+                    }
+                    if (i < field.length-1 && j < field[i].length && i >= 0 && j >= 0 &&  field[i+1][j]!=-1) {
+                        field[i+1][j]++;
+                    }
+                }
+            }
+        }
+    }
+
     public void showDisplayField(){
+        System.out.println("");
         for(int i=0;i<displayField.length;i++){
             for(int j=0;j<displayField[i].length;j++){
-                System.out.print(displayField[i][j]+" ");
+                System.out.print(displayField[i][j]+" \t");
             }
-            System.out.println("");
+            System.out.println("\n");
         }
     }
 
@@ -57,7 +129,7 @@ public class Minesweeper {
         for (int di = -1; di <= 1; di++) {
             for (int dj = -1; dj <= 1; dj++) {
                 if (row + di >= 0 && row + di < field.length && column + dj >= 0 && column + dj < field[row].length) {
-                    if ((displayField[row + di][column + dj] == '-' || displayField[row + di][column + dj] == 'F' )&& field[row + di][column + dj] != -1) {
+                    if ((displayField[row + di][column + dj] == '-' || displayField[row + di][column + dj] == 'F' )) {
                         displayField[row + di][column + dj] = Character.forDigit(field[row + di][column + dj], 10);
                         if (displayField[row + di][column + dj] == '0') {
                             showEmptyNeighbor(row + di, column + dj);
@@ -128,22 +200,7 @@ public class Minesweeper {
     }
 
     public static void main(String[] ar){
-        Scanner input=new Scanner(System.in);
-        System.out.print("Enter the total number of rows : ");
-        int rows=input.nextInt();
-        System.out.print("Enter the total number of columns : ");
-        int columns=input.nextInt();
-        System.out.print("Enter the total number of mines : ");
-        int mines=input.nextInt();
-        Minesweeper game=new Minesweeper(rows,columns,mines);
-        while (!gameover) {
-            System.out.print("Enter the row : ");
-            int row = input.nextInt()-1;
-            System.out.print("Enter the column : ");
-            int column = input.nextInt()-1;
-            System.out.print("Do you want to flag or open ? (f/o) ");
-            char action = input.next().charAt(0);
-            game.checkUserMove(row, column, action);
-        }
+         Minesweeper game=new Minesweeper();
+         game.startGame();
     }
 }

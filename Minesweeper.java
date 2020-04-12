@@ -86,29 +86,12 @@ public class Minesweeper {
             for(int j=0;j<field[i].length;j++){
                 displayField[i][j]='-';
                 if(field[i][j]==-1){
-                    if (i < field.length && j < field[i].length && i >= 1 && j >= 1 && field[i-1][j-1]!=-1) {
-                        field[i-1][j-1]++;
-                    }
-                    if (i < field.length && j < field[i].length-1 && i >= 1 && j >= 0 && field[i-1][j+1]!=-1) {
-                        field[i-1][j+1]++;
-                    }
-                    if (i < field.length-1 && j < field[i].length && i >= 0 && j >= 1 && field[i+1][j-1]!=-1 ) {
-                        field[i+1][j-1]++;
-                    }
-                    if (i < field.length-1 && j < field[i].length-1 && i >= 0 && j >= 0 && field[i+1][j+1]!=-1 ) {
-                        field[i+1][j+1]++;
-                    }
-                    if (i < field.length && j < field[i].length && i >= 1 && j >= 0 &&  field[i-1][j]!=-1) {
-                        field[i-1][j]++;
-                    }
-                    if(i < field.length && j < field[i].length && i >= 0 && j >= 1 && field[i][j-1]!=-1) {
-                        field[i][j-1]++;
-                    }
-                    if (i < field.length && j < field[i].length-1 && i >= 0 && j >= 0 && field[i][j+1]!=-1) {
-                        field[i][j+1]++;
-                    }
-                    if (i < field.length-1 && j < field[i].length && i >= 0 && j >= 0 &&  field[i+1][j]!=-1) {
-                        field[i+1][j]++;
+                    for (int di = -1; di <= 1; di++) {
+                        for (int dj = -1; dj <= 1; dj++) {
+                            if(i+di>=0 && i+di<field.length && j+dj>=0 && j+dj<field[i].length && field[i+di][j+dj]!=-1) {
+                                field[i + di][j + dj]++;
+                            }
+                        }
                     }
                 }
             }

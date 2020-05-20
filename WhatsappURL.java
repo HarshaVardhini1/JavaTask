@@ -16,6 +16,10 @@ class Contact {
         return contact_id;
     }
 
+    public void setContact_id(int contact_id) {
+        this.contact_id = contact_id;
+    }
+
     public String getName() {
         return name;
     }
@@ -194,6 +198,15 @@ class Chat {
             }
             return result;
         }
+        if(arguments[0].equals("archived")){
+            String result="";
+            for(Map.Entry<Integer,Chat> entry : chat_list.entrySet()){
+                if(entry.getValue().isArchived()){
+                    result+=entry.getValue().toString();
+                }
+            }
+            return result;
+        }
         for(Map.Entry<Integer,Chat> entry : chat_list.entrySet()){
             if(entry.getKey() == Integer.parseInt(arguments[0])){
                 return entry.getValue().toString();
@@ -227,6 +240,7 @@ class Chat {
                     entry.getValue().setArchived(false);
                     return "Chat is unarchived successfully!!";
                 }
+                return "please check your url!";
             }
         }
         return "No chat exists for this id! Cannot update chat status!";
@@ -299,10 +313,11 @@ class Status{
     }
 
     public String toString(){
-        return this.getContact().getName()+"\n"+status_info.values();
+        return this.getContact().getName()+"\n"+status_info.values()+"\n";
     }
 
     public static String getStatus(String[] arguments){
+        int contact_id;
         if(arguments.length==0){
             String result="";
             for(Map.Entry<Integer,Status> entry : status_list.entrySet()){
@@ -312,8 +327,23 @@ class Status{
             }
             return result;
         }
+        if(arguments[0].equals("muted")){
+            String result="";
+            for(Map.Entry<Integer,Status> entry : status_list.entrySet()){
+                if(entry.getValue().isMuted()){
+                    result+=entry.getValue().toString();
+                }
+            }
+            return result;
+        }
+        if(arguments[0].equals("mystatus")){
+            contact_id = 0;
+        }
+        else {
+            contact_id = Integer.parseInt(arguments[0]);
+        }
         for(Map.Entry<Integer,Status> entry : status_list.entrySet()){
-            if(entry.getKey() == Integer.parseInt(arguments[0])){
+            if(entry.getKey() == contact_id){
                 return entry.getValue().toString();
             }
         }
@@ -326,7 +356,19 @@ class Status{
     }
 
     public static String setStatus(String[] arguments) {
-        int contact_id = Integer.parseInt(arguments[0]);
+        int contact_id;
+        if(arguments[0].equals("mystatus")){
+            contact_id = 0;
+            if(!Contact.getContacts().containsKey(contact_id)) {
+                Contact contact = new Contact();
+                contact.setContact_id(0);
+                contact.setName("me");
+                Contact.getContacts().put(contact.getContact_id(), contact);
+            }
+        }
+        else {
+            contact_id = Integer.parseInt(arguments[0]);
+        }
         String text = arguments[1];
         Status status;
 
@@ -355,14 +397,18 @@ class Status{
     }
 
     public static String deleteStatus(String[] arguments){
-        if(arguments.length==0){
-            status_list = new HashMap<>();
-            return "All status successfully deleted!";
+        int contact_id;
+        int status_id = Integer.parseInt(arguments[1]);
+        if(arguments[0].equals("mystatus")){
+            contact_id = 0;
+        }
+        else {
+            contact_id = Integer.parseInt(arguments[0]);
         }
         for(int key : status_list.keySet()){
-            if(key == Integer.parseInt(arguments[0])){
-                Status status = status_list.get(Integer.parseInt(arguments[0]));
-                return status.deleteStatus_info(Integer.parseInt(arguments[1]));
+            if(key == contact_id){
+                Status status = status_list.get(contact_id);
+                return status.deleteStatus_info(status_id);
             }
         }
         return "No status exists for this id! Cannot delete status!";
@@ -394,12 +440,13 @@ class Status{
             if(entry.getKey() == Integer.parseInt(arguments[0])){
                 if(arguments[1].equals("mute")) {
                     entry.getValue().setMuted(true);
-                    return "Chat is archived successfully!!";
+                    return "Status is muted successfully!!";
                 }
                 if(arguments[1].equals("unmute")){
                     entry.getValue().setMuted(false);
-                    return "Chat is unarchived successfully!!";
+                    return "Status is unmuted successfully!!";
                 }
+                return "please check your url!";
             }
         }
         return "No status exists for this id! Cannot mute status!";
